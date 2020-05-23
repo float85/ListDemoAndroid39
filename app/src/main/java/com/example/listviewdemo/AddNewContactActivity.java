@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -23,8 +24,10 @@ public class AddNewContactActivity extends AppCompatActivity {
     Spinner spPhoneType;
     Button btnGroup, btnTune, btnSend;
     ArrayList<String> phoneType;
+    EditText etName;
 
     Contact contact;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +36,19 @@ public class AddNewContactActivity extends AppCompatActivity {
         setTitle("Add New Contact");
 
         Intent intent = getIntent();
-
         contact = (Contact) intent.getSerializableExtra("contact");
 
         spPhoneType = findViewById(R.id.spPhoneType);
         btnTune = findViewById(R.id.btnTune);
         btnGroup = findViewById(R.id.btnGroup);
         btnSend = findViewById(R.id.btnSend);
+        btnSend = findViewById(R.id.btnSend);
+        etName = findViewById(R.id.etName);
+
+
+        name = intent.getStringExtra("name");
+        etName.setText(name);
+
 
         phoneType = new ArrayList<>();
         phoneType.add("Phone");
@@ -147,7 +156,6 @@ public class AddNewContactActivity extends AppCompatActivity {
         });
 
     }
-
 
 
     //khởi tạo Menu tổng thể

@@ -8,6 +8,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -23,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
     List<Contact> contactList;
 
     RelativeLayout btnAdd;
+    int position;
+
+    int ADD_CONTACT_LIST = 113;
+    int EDIT_CONTACT_LIST = 115;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,25 +52,17 @@ public class MainActivity extends AppCompatActivity {
         contactList.add(contact5);
 
         adapterContact = new AdapterContact(contactList);
-
         lvContact.setAdapter(adapterContact);
-
-
-
-
-
-
-
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getBaseContext(), AddNewContactActivity.class);
+                Intent intent = new Intent(getBaseContext(), AddNewList.class);
                 //Truyền 1 object bằng intent
                 intent.putExtra("contact", contact1);
-                startActivity(intent);
-
+//                startActivity(intent);
+                startActivityForResult(intent, ADD_CONTACT_LIST);
             }
         });
 
@@ -73,8 +71,16 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String name = contactList.get(i).getName();
                 int number = contactList.get(i).getNumber();
+
                 Toast.makeText(getBaseContext(), "Name: " + name
                         + "\n" + "Number: " + number, Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(getBaseContext(), AddNewList.class);
+                //truyền 1 biến string qua activity khác
+                intent.putExtra("name", name);
+//                startActivity(intent);
+                position = i;
+                startActivityForResult(intent, EDIT_CONTACT_LIST);
 
             }
         });
@@ -88,5 +94,25 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(getBaseContext(), name, Toast.LENGTH_SHORT).show();
 //            }
 //        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            // hứng sự kiện khi chọn nút add thêm item
+            if (requestCode == ADD_CONTACT_LIST) {
+                String name = data.getStringExtra("name");
+                int phone = data.getIntExtra("phone", 0);
+                contactList.add(new Contact(name, phone, true));
+            }
+            // hứng sự kiện khi chọn nút edit item
+            else if (requestCode == EDIT_CONTACT_LIST) {
+                String phone = data.getStringExtra("phone");
+                String name = data.getStringExtra("name");
+                contactList.set(position, new Contact(name, Integer.parseInt(phone), true));
+            }
+        }
     }
 }
